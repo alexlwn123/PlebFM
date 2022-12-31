@@ -12,6 +12,7 @@ import Search from "./Search";
 import { getCustomer } from "../../lib/customers";
 import Checkout from "./Checkout";
 import LoadingSpinner from "../../components/LoadingSpinner";
+// import useSWR from 'swr';
 
 type Props = { params: {
     slug: string
@@ -21,26 +22,35 @@ type Props = { params: {
 
 export default function Bidding() {
   const pathName = usePathname()?.replaceAll('/', '');
-  const [newUser, setNewUser] = React.useState(false)
-  const [userProfile, setUserProfile] = React.useState({firstNym: '', lastNym: '', color: ''})
-  const [songChoice, setSongChoice] = React.useState('')
+  const [newUser, setNewUser] = React.useState(false);
+  const [userProfile, setUserProfile] = React.useState({firstNym: '', lastNym: '', color: ''});
+  const [songChoice, setSongChoice] = React.useState('');
+  // const { data, error } = useSWR('userProfile', async () => {
+  //   const userProfileJSON = localStorage.getItem('userProfile');
+  //   if (userProfileJSON) {
+  //     return JSON.parse(userProfileJSON);
+  //   } else {
+  //     throw new Error('not found');
+  //   }
+  // });
+  // if (data) 
 
   useEffect(() => {
     if (!songChoice) return;
-    console.log('SONG', JSON.parse(songChoice))
+    console.log('SONG', JSON.parse(songChoice));
 
   }, [songChoice]);
 
-  const generateUser = async ()=>{
+  const generateUser = async () => {
     const result = await fetch('/api/user', {
       method: 'POST',
     })
     const userData = await result.json()
     userData.user.color = userData.user.avatar
-    let timer = setTimeout(()=>{
-      setUserProfile(userData.user)
-      localStorage.setItem('userProfile', JSON.stringify(userData.user))
-    }, 1500)
+    const timer = setTimeout(()=>{
+      setUserProfile(userData.user);
+      localStorage.setItem('userProfile', JSON.stringify(userData.user));
+    }, 1500);
   }
 
   const setUser = ()=> {
@@ -56,7 +66,7 @@ export default function Bidding() {
     else setNewUser(true)
   }
 
-  React.useEffect(()=>{
+  useEffect(()=>{
     getUserProfileFromLocal();
   }, []);
 

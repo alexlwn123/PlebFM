@@ -10,6 +10,8 @@ import querystring from 'querystring';
 import LoadingSpinner from "../../../components/LoadingSpinner";
 import { Instance } from '../../../models/Instance'
 import { User } from "../../../models/User";
+import useSWR from 'swr';
+import { Song } from "../../../models/Song";
 
 // pleb.fm/bantam/queue
 export default function Queue() {
@@ -259,24 +261,30 @@ export default function Queue() {
   const [loading, setLoading] = useState(false)
   // if (songId === "") return [];
   useEffect(() => {
-
-  }, [])
-  useEffect(() => {
     setLoading(true);
     const userProfile = getUserProfileFromLocal();
     setUserProfile(userProfile);
     console.log('user', userProfile);
 
-    const fetchSong = async (songId: string, shortName: string) => {
-      const queryString = new URLSearchParams({ id: songId, shortName: shortName });
-      const res = await fetch(`/api/spotify/getSong?${queryString}`, {
-        headers: { 'Access-Control-Allow-Origin': '*' }
-      });
-      if (!res.ok) throw new Error('Failed to search song');
-      const result =  await res.json();
+    const fetchSong = async (songId: string, shortName: string): Promise<Song> => {
+      //@ts-ignore
+      // const fetcher = (url, headers: {headers: object}) => fetch(url, headers).then(res => res.json())
+      // const { data } = useSWR(`/api/spotify/getSong?${queryString}`, { headers: { 'Access-Control-Allow-Origin': '*' } })
+      // const queryString = new URLSearchParams({ id: songId, shortName: shortName });
+      // const res = await fetch(`/api/spotify/getSong?${queryString}`, {
+      //   headers: { 'Access-Control-Allow-Origin': '*' }
+      // });
+      // if (!res.ok) throw new Error('Failed to search song');
+      // const result =  await res.json();
       // console.log('FETCH RES', result)
-      return result;
+      // return result;
+      console.log('NOT IMPLEMENTED');
+      return null;
     };
+
+    type Pair = {
+       
+    }
 
     const getQueue = async () => {
       const queries = querystring.stringify({
@@ -313,26 +321,6 @@ export default function Queue() {
     }
     getQueue();
   }, []);
-  // {
-  //   trackTitle: "Bitcoin ipsum dolor sit amet",
-  //   artistName: "Nonce inputs",
-  //   feeRate: 10,
-  //   playing: false,
-  //   upNext: false,
-  //   bidders: [
-  //     {
-  //       firstNym: "Fluffy",
-  //       lastNym: "Honeybadger",
-  //       color: "teal"
-  //     },
-  //     {
-  //       firstNym: "Fluffy",
-  //       lastNym: "Honeybadger",
-  //       color: "teal"
-  //     }
-  //   ]
-  // },
-
 
   return (
     <>
