@@ -1,4 +1,4 @@
-import mongoose, { Schema } from 'mongoose';
+import mongoose, { Mongoose, Schema } from 'mongoose';
 import { Bid } from './Bid';
 
 /**
@@ -15,7 +15,7 @@ export type Instance = {
   songId: string;
   status: string;
   queueTimestamp: string;
-  playedTimestamp: string | undefined;
+  playedTimestamp?: string | undefined;
   bids: Array<Bid>;
   runningTotal: number;
 }
@@ -56,5 +56,5 @@ const InstanceSchema = new Schema<Instance>({
 })
 
 console.error(mongoose.models);
-const Instances = mongoose.models.Instances || mongoose.model('Instances', InstanceSchema);
+const Instances = (mongoose.models.Instances as mongoose.Model<Instance>) || mongoose.model('Instances', InstanceSchema);
 export default Instances;

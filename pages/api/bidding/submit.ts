@@ -10,8 +10,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       console.error(req.body);
       const { customerName, userId, rHash, songId, bidAmount } = req.body;
       const now: string = Date.now().toString();
+      const user = await Users.findOne({ userId: userId });
+
       const newBid: Bid = {
-        userId: userId,
+        user: user,
         bidAmount: bidAmount,
         timestamp: now,
         rHash: rHash,
@@ -26,24 +28,30 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       // if (!user) return res.status(400).json({ success: false, error: 'User not found.' });
       // console.error(user)
 
-      const matchingInstances = await Instances.findOne({ "bids.rHash": { $eq: rHash } })
-      if (matchingInstances) return res.status(400).json({ success: false, error: 'Duplicate bid found.' });
-      console.error(matchingInstances)
+      const reusedBidInstance = await Instances.findOne({ "bids.rHash": { $eq: rHash } })
+      if (reusedBidInstance) return res.status(400).json({ success: false, error: 'Duplicate bid found.' });
+      console.error(reusedBidInstance);
 
-      const instance = await Instances.findOneAndUpdate({ songId: songId }, { $push: { bids: newBid }, $inc: { runningTotal: bidAmount } }).catch(_ => {});
-      if (instance) return res.status(200).json({ success: true, new: false, instance: instance });
+      const existingInstance = await Instances.findOne({ songId: songId });
 
-      const runningTotal = (instance?.bids?.reduce((p: any, c: any) => p.bidAmount + c.bidAmount).catch(_ => {}) ?? 0 + bidAmount)
-      const newInstance: Instance = await Instances.create({
-        customerId: customer.id,
-        songId: songId,
-        status: "queued",
-        queueTimestamp: now,
-        bids: new Array<Bid>(newBid),
-        runningTotal: runningTotal
-      })
+      // Boost existing Instance
+      if (existingInstance) {
+        const instance = await Instances.findOneAndUpdate({ songId: songId }, { $push: { bids: newBid }, $inc: { runningTotal: bidAmount } }).catch(_ => {});
+        return res.status(200).json({ success: true, new: false, instance: instance });
 
-      return res.status(200).json({ success: true, new: true, instance: newInstance });
+      // New Instance
+      } else {
+        const newInstance: Instance = {
+          customerId: customer.id,
+          songId: songId,
+          status: "queued",
+          queueTimestamp: now,
+          bids: new Array<Bid>(newBid),
+          runningTotal: bidAmount
+        };
+        await Instances.create(newInstance).catch(_ => console.error('Add Instance Failed'));
+        return res.status(200).json({ success: true, new: true, instance: newInstance });
+      }
     }
 
   } catch (error) {

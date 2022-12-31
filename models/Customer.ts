@@ -30,5 +30,5 @@ const CustomerSchema = new Schema<Customer>({
   }
 })
 
-const Customers = mongoose.models.Customers || mongoose.model('Customers', CustomerSchema);
+const Customers = (mongoose.models.Customers as mongoose.Model<Customer>)|| mongoose.model('Customers', CustomerSchema);
 export default Customers;
