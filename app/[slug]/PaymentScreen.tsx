@@ -7,6 +7,7 @@ import Button from "../../components/Button";
 import { useEffect, useState } from "react";
 import NavBar from '../../components/NavBar';
 
+// @ts-ignore
 function PaymentScreen(props: {song, readyToCheckout, invoicePaid, setInvoicePaid, totalBid, bid}) {
   const [bolt11, setBolt11] = useState({ hash: '', paymentRequest: '', });
   const [loading, setLoading] = useState(false);

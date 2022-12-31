@@ -8,6 +8,8 @@ import Avatar from "../../../components/Avatar";
 import Tag from "../../../components/Tag";
 import querystring from 'querystring';
 import LoadingSpinner from "../../../components/LoadingSpinner";
+import { Instance } from '../../../models/Instance'
+import { User } from "../../../models/User";
 
 // pleb.fm/bantam/queue
 export default function Queue() {
@@ -235,13 +237,24 @@ export default function Queue() {
     },
   ]
 
+  // Used for frontend hydration
+  type SongObject = {
+    trackTitle: string,
+    artistName: string,
+    feeRate: number,
+    playing: boolean,
+    myPick: boolean,
+    upNext: boolean,
+    bidders: User[],
+  }
+
   const getUserProfileFromLocal = ()=> {
     const userProfileJSON = localStorage.getItem('userProfile')
     if(userProfileJSON) {
       return JSON.parse(userProfileJSON);
     }
   }
-  const [queueData, setQueueData] = useState([]);
+  const [queueData, setQueueData] = useState<SongObject[]>([]);
   const [userProfile, setUserProfile] = useState([]);
   const [loading, setLoading] = useState(false)
   // if (songId === "") return [];
@@ -270,7 +283,7 @@ export default function Queue() {
         shortName: 'atl'
       });
       const response = await fetch(`/api/leaderboard/queue?${queries}`);
-      const res = await response.json();
+      const res: {queue: Instance[]} = await response.json();
       const promises = res.queue.map(x => {
         const res = fetchSong(x.songId, 'atl').then(song => {
           return {obj: x, song: song}
@@ -279,11 +292,11 @@ export default function Queue() {
       }) 
       const songs = await Promise.all(promises);
       console.log(songs)
-      const fixed = songs.map((pair) => {
+      const fixed: SongObject[] = songs.map((pair) => {
         const {obj, song} = pair;
 
         const totalBid = obj.bids.reduce((x, y) => x+=y.bidAmount, 0);
-        const myPick = obj.bids.filter(x => x.userId === userProfile.userId).length > 0;
+        const myPick = obj.bids.filter(x => x.user.userId === userProfile.userId).length > 0;
         return {
           trackTitle: song.name,
           artistName: song.artists[0].name,

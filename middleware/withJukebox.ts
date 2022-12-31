@@ -12,6 +12,7 @@ const withJukebox = (handler: any) => async (req: NextApiRequest, res: NextApiRe
   }
   if (!shortName) return res.status(400).json('withJukebox - Bad request: requires shortName in body or query')
 
+  //@ts-ignore
   const customer: Customer | null = await Customers.findOne({filter: {shortName: shortName}});
   if (!customer) return res.status(400).send(`withJukebox - Bad request: Jukebox with name "${shortName}" not found`)
   const refreshToken = customer.spotifyRefreshToken;

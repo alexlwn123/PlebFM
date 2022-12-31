@@ -252,11 +252,11 @@ export default function User() {
         <div className="w-full pb-36 text-white relative z-50 flex flex-col items-center min-h-screen font-thin">
           {queueDataPlayed.map((song, key)=>(
             <div className="p-6 border-b border-white/20 w-full" key={key}>
-              {song.playing || song.upNext || song.myPick ?
+              {song.myPick ?
                 <div className="mb-6">
                   <Tag
-                    text={song.playing ? "Now Playing" : song.upNext ? "Up Next" : song.myPick ? "My Pick" : " "}
-                    color={song.playing ? "orange" : song.upNext ? "teal" : song.myPick ? "purple" : " "}
+                    text={song.myPick ? "My Pick" : " "}
+                    color={song.myPick ? "purple" : " "}
                   />
                 </div>
                 : ``}

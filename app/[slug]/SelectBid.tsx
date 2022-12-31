@@ -2,10 +2,17 @@
 import { ArrowRightIcon, CartIcon, CopyIcon, CrossIcon } from "@bitcoin-design/bitcoin-icons-react/filled";
 import bokeh2 from "../../public/pfm-bokeh-2.jpg"
 import Button from "../../components/Button";
-import { useState } from "react";
-import NavBar from "../../components/NavBar";
+import { Dispatch, SetStateAction, useState } from "react";
+import { Song } from "../../models/Song";
 
-export default function SelectBid(props: {song, setReadyToCheckout, cancelSong, setTotalBid, setBid}) {
+interface SelectBidProps {
+  song: Song, 
+  setReadyToCheckout: Dispatch<SetStateAction<boolean>>, 
+  cancelSong: () => void, 
+  setTotalBid: Dispatch<SetStateAction<number>>, 
+  setBid: Dispatch<SetStateAction<number>>, 
+}
+export default function SelectBid(props: SelectBidProps) {
   const maxSats = 100;
   const [feeRate, setFeeRate] = useState(0);
   const [feeTotal, setFeeTotal] = useState(0);
@@ -45,6 +52,7 @@ export default function SelectBid(props: {song, setReadyToCheckout, cancelSong, 
       <div className="fixed w-full h-full bg-black top-0 left-0 bg-pfm-purple-100">
         { /* eslint-disable */}
           <img 
+            //@ts-ignore
             src={props?.song?.album?.images[0]?.url ?? bokeh2} 
             alt={props?.song?.album?.name ?? "Album"} 
             width={100}

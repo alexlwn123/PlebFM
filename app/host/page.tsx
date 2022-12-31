@@ -31,6 +31,7 @@ export default function Leaderboard() {
   useEffect(() => {
     if (!session) return;
     const foo = async () => {
+      // @ts-ignore
       const accessToken = session.accessToken;
       // const accessToken = await getAccessToken(session.refreshToken);
       console.log('accessToken', accessToken);

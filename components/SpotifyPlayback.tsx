@@ -11,7 +11,9 @@ type Props = {
 export const WebPlayback = ({ token }: Props) => {
   const [is_paused, setPaused] = useState<boolean>(false);
   const [is_active, setActive] = useState<boolean>(false);
+  //@ts-ignore
   const [player, setPlayer] = useState<Spotify.Player | null>(null);
+  //@ts-ignore
   const [current_track, setTrack] = useState<Spotify.Track | null>(null);
   const [deviceId, setDeviceId] = useState<string | null>(null);
 
@@ -28,6 +30,7 @@ export const WebPlayback = ({ token }: Props) => {
     //@ts-ignore
     window.onSpotifyWebPlaybackSDKReady = () => {
       console.log('ready');
+      //@ts-ignore
       const player = new window.Spotify.Player({
         name: "Pleb.FM",
         getOAuthToken: (cb) => {

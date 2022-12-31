@@ -5,12 +5,13 @@ import javascript = webpack.javascript;
 import AlbumScreen from "./AlbumScreen"
 import PaymentScreen from "./PaymentScreen"
 import SelectBid from "./SelectBid"
+import { Song } from "../../models/Song";
 
 interface CheckoutProps {
   // songId: string,
-  song: object,
+  song: Song,
   parentCallback: javascript,
-  slug: string
+  slug: string,
 }
 
 export default function Checkout(props:CheckoutProps) {

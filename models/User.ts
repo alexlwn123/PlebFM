@@ -37,6 +37,7 @@ export type User = {
     firstNym: string;
     lastNym: string;
     avatar: string;
+    color?: string;
 };
 
 export const randomEnumValue = (enumeration: any) => {
